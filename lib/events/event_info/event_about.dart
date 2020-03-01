@@ -8,6 +8,7 @@ import 'package:tryst_20_user/error_alert.dart';
 import 'package:tryst_20_user/events/event_card_contents/event_date.dart';
 import 'package:tryst_20_user/events/event_card_contents/event_time.dart';
 import 'package:tryst_20_user/events/event_card_contents/event_venue.dart';
+import 'package:tryst_20_user/events/event_info/event_updates_list.dart';
 import 'package:tryst_20_user/loading.dart';
 import '../../globals.dart';
 import '../event_class.dart';
@@ -22,8 +23,9 @@ import 'package:path_provider/path_provider.dart';
 
 class EventAbout extends StatelessWidget {
   final Event _event;
+  final List updates;
 
-  EventAbout(this._event);
+  EventAbout(this._event, this.updates);
 
   @override
   Widget build(BuildContext context) {
@@ -194,6 +196,9 @@ class EventAbout extends StatelessWidget {
       height: 25,
     ));
 
+    toReturn.add((updates.length>0)?EventUpdatesList(updates):Container());
+
+
     toReturn.add(Text(
       'ABOUT THE EVENT',
       style: TextStyle(
@@ -356,7 +361,9 @@ class EventAbout extends StatelessWidget {
       // toReturn.add(Container(
       //   height: 20,
       // ));
-
+      toReturn.add(Container(
+        height: 10,
+      ));
       toReturn.add(Center(
         child: RaisedButton(
           child: Text("REGISTER"),
@@ -375,16 +382,16 @@ class EventAbout extends StatelessWidget {
     }
 
     if (_event.category.id != "Guest Lectures") {
-      if (_event.photos.length != 0) {
-        toReturn.add(Center(
-            child: Container(
-          margin: EdgeInsets.only(bottom: 30),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: Image.network(_event.photos[0][0]),
-          ),
-        )));
-      }
+      // if (_event.photos.length != 0) {
+      //   toReturn.add(Center(
+      //       child: Container(
+      //     margin: EdgeInsets.only(bottom: 30),
+      //     child: ClipRRect(
+      //       borderRadius: BorderRadius.circular(15),
+      //       child: Image.network(_event.photos[0][0]),
+      //     ),
+      //   )));
+      // }
     } else {
       if (_event.photos.length != 0) {
         _event.photos.forEach((p) {
@@ -423,8 +430,7 @@ class EventAbout extends StatelessWidget {
         });
       }
     }
-    
-    
+
     if (_event.rules.length > 0) {
       toReturn.add(
         Text(
@@ -463,61 +469,58 @@ class EventAbout extends StatelessWidget {
     }
 
     toReturn.add(
-        Center(
-          child: RaisedButton(
-              child: Text("GET CERTIFICATE"),
-              onPressed: () async {
-                showLoading(context);
-                HttpClient client = new HttpClient();
-                var _downloadData = List<int>();
-                Directory tempDir = await getTemporaryDirectory();
-                String tempPath = tempDir.path;
-                print(tempPath);
-                var fileSave = new File(tempPath + '/cert.pdf');
-                client.badCertificateCallback =
-                    ((X509Certificate cert, String host, int port) => true);
+      Center(
+        child: RaisedButton(
+            child: Text("GET CERTIFICATE"),
+            onPressed: () async {
+              showLoading(context);
+              HttpClient client = new HttpClient();
+              var _downloadData = List<int>();
+              Directory tempDir = await getTemporaryDirectory();
+              String tempPath = tempDir.path;
+              print(tempPath);
+              var fileSave = new File(tempPath + '/cert.pdf');
+              client.badCertificateCallback =
+                  ((X509Certificate cert, String host, int port) => true);
 
-                String _url = '$url/api/event/certificate';
-                Map map = {"id": _event.id, "email": currentUser.email};
-                // Map map = {"id": "EVENTmQVHQ", "email": "johndoe@gmail.com"};
-                // try{
-                HttpClientRequest request =
-                    await client.postUrl(Uri.parse(_url));
-                request.headers.set("x-auth-token", "$token");
-                request.headers.set('content-type', 'application/json');
+              String _url = '$url/api/event/certificate';
+              Map map = {"id": _event.id, "email": currentUser.email};
+              // Map map = {"id": "EVENTmQVHQ", "email": "johndoe@gmail.com"};
+              // try{
+              HttpClientRequest request = await client.postUrl(Uri.parse(_url));
+              request.headers.set("x-auth-token", "$token");
+              request.headers.set('content-type', 'application/json');
 
-                request.add(utf8.encode(json.encode(map)));
-                HttpClientResponse _response = await request.close();
-                print(_response.statusCode);
-                if (_response.statusCode == 200) {
-                  _response.listen(
-                    (d) => _downloadData.addAll(d),
-                    onDone: () {
-                      fileSave
-                          .writeAsBytes(_downloadData)
-                          .then((File filesave) {
-                        Navigator.pop(context);
-                        OpenFile.open(tempPath + '/cert.pdf',
-                            type: "application/pdf", uti: "com.adobe.pdf");
-                      });
-                    },
-                  );
-                  print("cert");
-                  // OpenFile.open('./cert.pdf', type: "application/pdf");
-                } else {
-                  String response =
-                      await _response.transform(utf8.decoder).join();
-                  Map<String, dynamic> parsedJson = json.decode(response);
-                  Navigator.pop(context);
-                  showErrorAlert(context, "Failed", parsedJson["message"]);
-                }
-              }),
-        ),
-      );
+              request.add(utf8.encode(json.encode(map)));
+              HttpClientResponse _response = await request.close();
+              print(_response.statusCode);
+              if (_response.statusCode == 200) {
+                _response.listen(
+                  (d) => _downloadData.addAll(d),
+                  onDone: () {
+                    fileSave.writeAsBytes(_downloadData).then((File filesave) {
+                      Navigator.pop(context);
+                      OpenFile.open(tempPath + '/cert.pdf',
+                          type: "application/pdf", uti: "com.adobe.pdf");
+                    });
+                  },
+                );
+                print("cert");
+                // OpenFile.open('./cert.pdf', type: "application/pdf");
+              } else {
+                String response =
+                    await _response.transform(utf8.decoder).join();
+                Map<String, dynamic> parsedJson = json.decode(response);
+                Navigator.pop(context);
+                showErrorAlert(context, "Failed", parsedJson["message"]);
+              }
+            }),
+      ),
+    );
 
-      toReturn.add(Container(
-        height: 20,
-      ));
+    toReturn.add(Container(
+      height: 20,
+    ));
 
     toReturn.add(
       Text(

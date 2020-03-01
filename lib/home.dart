@@ -22,7 +22,7 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   TabController _controller;
-  int _selectedTab = 1;
+  int _selectedTab = 0;
   List<Widget> _tabs;
   List<BottomNavigationBarItem> _navBarItems;
 
@@ -58,16 +58,16 @@ class HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             }),
         ProfileIcon(widget.onlogout)
       ],
-      bottom: TabBar(
-        indicatorColor: Colors.white70,
-        controller: _controller,
-        tabs: [
-          Tab(text: 'PREFEST'),
-          Tab(text: 'DAY 1'),
-          Tab(text: 'DAY 2'),
-          Tab(text: 'DAY 3'),
-        ],
-      ),
+      // bottom: TabBar(
+      //   indicatorColor: Colors.white70,
+      //   controller: _controller,
+      //   tabs: [
+      //     Tab(text: 'PREFEST'),
+      //     Tab(text: 'DAY 1'),
+      //     Tab(text: 'DAY 2'),
+      //     Tab(text: 'DAY 3'),
+      //   ],
+      // ),
     );
     _tabs = [CategoriesTab(), EventsTab(_controller)];
     _navBarItems = [

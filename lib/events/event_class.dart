@@ -340,18 +340,21 @@ class EventDay {
 }
 
 class EventCategory {
-  String name, id;
+  String name, id, imagename;
 
-  EventCategory({this.name, this.id});
+  EventCategory({String name, this.id, String imagename= "qq"}) {
+    this.name = name;
+    if(imagename=="qq") this.imagename=this.id; else this.imagename = imagename;
+  }
 }
 
-EventCategory workshop = EventCategory(name: "Workshop", id: "Workshops");
+EventCategory workshop = EventCategory(name: "Workshop", id: "Workshops", );
 EventCategory competition =
     EventCategory(name: "Competition", id: "Competitions");
 EventCategory flagship = EventCategory(name: "Flagship", id: "Flagship");
 EventCategory exhibition = EventCategory(name: "Exhibition", id: "Exhibitions");
 EventCategory guest =
-    EventCategory(name: "Guest Lecture", id: "Guest Lectures");
+    EventCategory(name: "Guest Lecture", id: "Guest Lectures", imagename: "guestlectures");
 
 List<EventCategory> allCategories = [
   workshop,

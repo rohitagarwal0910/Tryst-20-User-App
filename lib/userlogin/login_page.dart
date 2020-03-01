@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 import 'package:tryst_20_user/user_class.dart';
 import 'package:tryst_20_user/userlogin/signup_page.dart';
 import 'dart:async';
@@ -56,11 +56,31 @@ Future login(
     // if (_response.statusCode == 200) {
     // var parsedJson = json.decode(_response.body);
     currentUser = User.fromJson(parsedJson["data"]["user"]);
+    print(currentUser.starredevents);
     print("Login successful");
     print("token : $token");
+    print("registering fcm token");
+
     await storage.write(key: "email", value: _email);
     await storage.write(key: "password", value: _password);
     await storage.write(key: "token", value: token);
+
+    HttpClient client = new HttpClient();
+    client.badCertificateCallback =
+        ((X509Certificate cert, String host, int port) => true);
+
+    String _url = '$url/api/user/storefcm';
+    Map map = {"fcm_token" : fcm_token};
+    // try{
+    HttpClientRequest request = await client.postUrl(Uri.parse(_url));
+    request.headers.set('content-type', 'application/json');
+    request.headers.set('x-auth-token', token);
+
+    request.add(utf8.encode(json.encode(map)));
+    HttpClientResponse _response = await request.close();
+    String response = await _response.transform(utf8.decoder).join();
+    print(_response.statusCode);
+    print(response);
     if (pop) Navigator.pop(context);
     onlogin();
   } else if (_response.statusCode == 401 || _response.statusCode == 500) {
@@ -198,15 +218,43 @@ class LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  Center(
+                    child: Image.asset(
+                      'assets/trystlogowhite.png',
+                      width: MediaQuery.of(context).size.width * 0.4,
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 45,
+                          fontWeight: FontWeight.w200),
+                    ),
+                  ),
                   SizedBox(
-                    height: 250,
-                    child: Center(child:Text(
-                    title,
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 50,
-                        fontWeight: FontWeight.w200),
-                  ),)
+                    height: 3,
+                  ),
+                  // Expanded(child: Container()),
+                  Center(
+                    child: Text(
+                      "sponsored by",
+                      style: TextStyle(
+                          color: Colors.white70, fontWeight: FontWeight.w300),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 3,
+                  ),
+                  Center(
+                    child: Image.asset(
+                      'assets/graphitelogo.png',
+                      width: MediaQuery.of(context).size.width * 0.4,
+                    ),
+                  ),
+                  Container(
+                    height: 29,
                   ),
                   Form(
                     key: _key,
@@ -214,7 +262,7 @@ class LoginPageState extends State<LoginPage> {
                       // direction: Axis.vertical,
                       alignment: WrapAlignment.center,
                       // crossAxisAlignment: WrapCrossAlignment.center,
-                      runSpacing: 9,
+                      runSpacing: 7,
                       children: <Widget>[
                         TextFormField(
                           decoration: InputDecoration(
@@ -237,6 +285,7 @@ class LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(20),
                                 borderSide: BorderSide(color: Colors.white)),
                           ),
+                          keyboardType: TextInputType.emailAddress,
                           style: TextStyle(color: Colors.white),
                           onSaved: (text) {
                             _email = text;
@@ -283,7 +332,7 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 30,
+                    height: 5,
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,

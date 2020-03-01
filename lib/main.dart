@@ -47,6 +47,9 @@ class MyAppState extends State<MyApp> with TickerProviderStateMixin {
   }
 
   void onlogout() {
+    currentUser = null;
+    eventsList = [];
+    starredEvents = [];
     print("logged out");
     setState(() {
       signedIn = false;
@@ -129,6 +132,7 @@ class MyAppState extends State<MyApp> with TickerProviderStateMixin {
     );
 
     _firebaseMessaging.getToken().then((token) {
+      fcm_token = token;
       print("fcm token: $token");
     });
   }

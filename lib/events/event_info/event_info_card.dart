@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:tryst_20_user/events/event_info/star_button.dart';
 
 import '../event_class.dart';
 import '../event_card_contents/event_time.dart';
@@ -16,8 +17,18 @@ class EventInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime d = DateTime.parse(_event.dtv_details[0].day);
-      DateTime start = DateTime(d.year, d.month, d.day, _event.dtv_details[0].start_time.hour, _event.dtv_details[0].start_time.minute);
-      DateTime end = DateTime(d.year, d.month, d.day, _event.dtv_details[0].end_time.hour, _event.dtv_details[0].end_time.minute);
+    DateTime start = DateTime(
+        d.year,
+        d.month,
+        d.day,
+        _event.dtv_details[0].start_time.hour,
+        _event.dtv_details[0].start_time.minute);
+    DateTime end = DateTime(
+        d.year,
+        d.month,
+        d.day,
+        _event.dtv_details[0].end_time.hour,
+        _event.dtv_details[0].end_time.minute);
     EventTime et = EventTime(start, end);
     List<Widget> actionRow = List<Widget>();
     // actionRow.add(IconButton(
@@ -27,9 +38,9 @@ class EventInfoCard extends StatelessWidget {
     //   color: Colors.white,
     //   iconSize: 20,
     // ));
-    // actionRow.add(
-    //   StarButton(_event, _refreshLists),
-    // );
+    actionRow.add(
+      StarButton(_event, _refreshLists),
+    );
     // if (showButton)
     // actionRow.add(FlatButton(
     //   onPressed: () {
@@ -46,6 +57,13 @@ class EventInfoCard extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: 500),
       child: Container(
         decoration: BoxDecoration(
+          image: (_event.photos.length > 0 && _event.category.name!="Guest Lecture")
+              ? DecorationImage(
+                  image: NetworkImage(_event.photos[0][0]),
+                  fit: BoxFit.cover,
+                  colorFilter:
+                      ColorFilter.mode(Colors.black.withOpacity(0.7), BlendMode.darken))
+              : null,
           color: Colors.indigo,
           borderRadius: BorderRadius.all(Radius.circular(20.0)),
         ),
@@ -88,7 +106,7 @@ class EventInfoCard extends StatelessWidget {
                     style: TextStyle(
                         color: Colors.white70,
                         fontSize: 15,
-                        fontWeight: FontWeight.w300),
+                        fontWeight: FontWeight.w400),
                     maxLines: 1,
                   ),
                 ],
@@ -106,10 +124,10 @@ class EventInfoCard extends StatelessWidget {
             //   ],
             // ) : Container(height: 0, width:0),
             Container(
-              padding: EdgeInsets.only(bottom: 20),
-              // child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //     children: actionRow),
+              padding: EdgeInsets.only(bottom: 5),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: actionRow),
             ),
           ],
         ),

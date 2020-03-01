@@ -13,8 +13,9 @@ class EventUpdate extends StatelessWidget {
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: 600),
       child: Container(
+        width: MediaQuery.of(context).size.width,
         margin: EdgeInsets.symmetric(vertical: 7),
-        padding: EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 10),
+        padding: EdgeInsets.only(top: 15, right: 25, left: 25, bottom: 15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: Color(0x22AAAAAA)
@@ -23,14 +24,14 @@ class EventUpdate extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(_update.message, style: TextStyle(color: Colors.white),),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Text(DateFormat('d MMM').format(_update.dateTime),  style: TextStyle(fontSize: 10, color: Colors.white54),),
-                Text(' • ', style: TextStyle(color: Colors.white54),),
-                Text(DateFormat('h:mm a').format(_update.dateTime), style: TextStyle(fontSize: 10, color: Colors.white54),)
-              ],
-            )
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.end,
+            //   children: <Widget>[
+            //     Text(DateFormat('d MMM').format(_update.dateTime),  style: TextStyle(fontSize: 10, color: Colors.white54),),
+            //     Text(' • ', style: TextStyle(color: Colors.white54),),
+            //     Text(DateFormat('h:mm a').format(_update.dateTime), style: TextStyle(fontSize: 10, color: Colors.white54),)
+            //   ],
+            // )
           ],
         ),
       ),

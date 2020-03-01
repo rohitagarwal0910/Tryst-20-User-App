@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -10,7 +12,9 @@ class StarButton extends StatefulWidget {
   final Event _event;
   final Function _reorderList;
 
-  StarButton(this._event, this._reorderList);
+  StarButton(this._event, this._reorderList){
+    _event.isStarred=(currentUser.starredevents.contains(_event.id))?true:false;
+  }
 
   @override
   State<StatefulWidget> createState() {
@@ -50,14 +54,26 @@ class StarButtonState extends State<StarButton> {
 
   Future<Null> starEvent(String eventid) async {
     print("Starring Event");
-    final response = await http.post(
-      "$url/api/events/$eventid/star",
-      headers: {"authorization": "Bearer $token"},
-    );
+    HttpClient client = new HttpClient();
+    client.badCertificateCallback =
+        ((X509Certificate cert, String host, int port) => true);
+
+    String _url = '$url/api/user/starEvents';
+
+    HttpClientRequest request = await client.postUrl(Uri.parse(_url));
+    Map map = {"event_id": _event.id};
+
+    request.headers.set('content-type', 'application/json');
+    request.headers.set("x-auth-token", "$token");
+    request.add(utf8.encode(json.encode(map)));
+
+    HttpClientResponse response = await request.close();
+
+    String reply = await response.transform(utf8.decoder).join();
     print(response.statusCode);
     if (response.statusCode == 200) {
-      var parsedJson = json.decode(response.body);
-      if (parsedJson["message"] == "Successfully Starred") {
+      var parsedJson = json.decode(reply);
+      if (parsedJson["error"] == false) {
         _event.isStarred = !_event.isStarred;
         if (_event.isStarred) {
           _icon = Icon(
@@ -65,16 +81,18 @@ class StarButtonState extends State<StarButton> {
             color: Colors.amberAccent,
           );
           _toolTip = 'Unstar';
+          starredEvents.add(eventsList.firstWhere((t) => t.id == _event.id));
+          currentUser.starredevents.add(_event.id);
         } else {
           _icon = Icon(
             Icons.star_border,
             color: Colors.white,
           );
           _toolTip = 'Star';
+          starredEvents.remove(starredEvents.firstWhere((t) => t.id == _event.id));
+          currentUser.starredevents.remove(_event.id);
         }
         // refreshLists(_event);
-        sortEvents();
-        _reorderList();
         onpress = () {
           onStarPress();
         };

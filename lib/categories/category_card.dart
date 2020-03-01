@@ -54,16 +54,21 @@ class CategoryCard extends StatelessWidget {
     // }
     return GestureDetector(
       onTap: () async {
-        await Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CategoryEvents(category)));
+        await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CategoryEvents(category)));
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.indigo,
-          borderRadius: BorderRadius.circular(15)
-        ),
+            border: Border.all(color: Colors.indigo, width: 3),
+            image: DecorationImage(
+                image: AssetImage('assets/${category.imagename}.jpg'),
+                fit: BoxFit.cover,
+                colorFilter:
+                    ColorFilter.mode(Colors.black54, BlendMode.darken)),
+            color: Colors.indigo,
+            borderRadius: BorderRadius.circular(15)),
         padding: EdgeInsets.symmetric(vertical: 30),
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        margin: EdgeInsets.only(bottom: 20, left: 20, right:20),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -71,7 +76,15 @@ class CategoryCard extends StatelessWidget {
                 child: Center(
                   child: AutoSizeText(
                     category.id,
-                    style: TextStyle(fontSize: 20, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                        shadows: <Shadow>[
+                          Shadow(
+                            blurRadius: 10.0,
+                            color: Color.fromARGB(255, 0, 0, 0),
+                          ),
+                        ]),
                     maxLines: 1,
                   ),
                 ),

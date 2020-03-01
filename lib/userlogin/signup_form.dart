@@ -67,8 +67,11 @@ class _SignUpFormState extends State<SignUpForm> {
       "role": "normal",
       "year": year,
       "gender": gender,
+      "photo_url": photo_url,
       "dob": dob.toIso8601String() + "Z",
     };
+
+    print(bodyMap.toString());
 
     HttpClientRequest request = await client.postUrl(Uri.parse(_url));
 
@@ -495,30 +498,41 @@ class _SignUpFormState extends State<SignUpForm> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                RaisedButton(
-                  onPressed: () {
-                    showCancelAlert(context, 'Cancel Sign-Up?',
-                        'Are you sure you want to cancel making new account?');
-                  },
-                  child: Text('CANCEL'),
-                  color: Colors.indigo[400],
-                ),
-                RaisedButton(
-                  color: Colors.blueAccent,
-                  child: Text(
-                    'SUBMIT',
-                    style: TextStyle(color: Colors.white),
+                Expanded(
+                  child: RaisedButton(
+                    onPressed: () {
+                      showCancelAlert(context, 'Cancel Sign-Up?',
+                          'Are you sure you want to cancel making new account?');
+                    },
+                    child: Text('CANCEL'),
+                    color: Colors.indigo[400],
                   ),
-                  onPressed: () async {
-                    _key.currentState.save();
-                    if (_key.currentState.validate()) {
-                      showLoading(context);
-                      await makeUser();
-                    }
-                  },
+                ),
+                Container(width: 10,),
+                Expanded(
+                  child: RaisedButton(
+                    color: Colors.blueAccent,
+                    child: Text(
+                      'SUBMIT',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () async {
+                      _key.currentState.save();
+                      if (_key.currentState.validate()) {
+                        showLoading(context);
+                        await makeUser();
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
+            Container(height: 5),
+            Text(
+              "Details cannot be changed later.",
+              style: TextStyle(color: Colors.white60),
+            ),
+            Container(height: 15)
           ],
         ),
       ),

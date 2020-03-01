@@ -31,6 +31,7 @@ class User {
   bool isSuperAdmin = false;
   // List<UClub> superAdminOf;
   // bool isSSAdmin;
+  List<String> starredevents = [];
 
   User({
     this.name,
@@ -45,7 +46,7 @@ class User {
     this.sbi_acc_no,
     this.university,
     this.year,
-    this.dob
+    this.dob,
     // this.isAdmin,
     // this.adminof,
     // this.isSuperAdmin,
@@ -69,7 +70,7 @@ class User {
     //   adminof.add(UClub.fromJson(json["superAdminOf"][i]));
     //   superadminof.add(UClub.fromJson(json["superAdminOf"][i]));
     // }
-    return User(
+    User tempuser =  User(
       name: json["name"],
       email: json["email"],
       id: json["id"],
@@ -83,11 +84,14 @@ class User {
       university: json["university"],
       sbi_acc_no: json["sbi_acc_no"],
       year: json["year"],
+      dob: DateTime.parse(json["dob"])
       // isAdmin: iA,
       // isSuperAdmin: iSA,
       // adminof: adminof,
       // superAdminOf: superadminof,
     );
+    json["star_events"].forEach((ev) => tempuser.starredevents.add(ev.toString()));
+    return tempuser;
   }
 }
 

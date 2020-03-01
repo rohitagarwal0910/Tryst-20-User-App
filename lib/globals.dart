@@ -9,6 +9,8 @@ User currentUser;
 
 List<Event> eventsList;
 
+String fcm_token;
+
 List<EventDay> prefestEvents = [];
 List<EventDay> day1Events = [];
 List<EventDay> day2Events = [];
@@ -128,6 +130,8 @@ String title = "Tryst '20";
 String token;
 
 String headerKey = "x_auth_token";
+
+List<Event> starredEvents = [];
 
 // void refreshLists(Event event) {
 //   bool isToday = (DateTime.now().difference(event.startsAt).inDays >= 0 &&

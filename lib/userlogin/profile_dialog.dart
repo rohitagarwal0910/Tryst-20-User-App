@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:tryst_20_user/loading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
@@ -41,7 +42,19 @@ Future logout() async {
 }
 
 void showAlert(BuildContext context, Function onlogout) {
-  String role = currentUser.email+"\n"+currentUser.phoneno;
+  String role = currentUser.email +
+      "\n" +
+      currentUser.phoneno +
+      "\n\n" +
+      currentUser.university +
+      "\n" +
+      "Year: " +
+      currentUser.year +
+      "\n" +
+      "DOB: " +
+      DateFormat("d MMM yyyy").format(currentUser.dob) +
+      "\nAddress: " +
+      currentUser.address;
   String name = (currentUser.name == null) ? "User Name" : currentUser.name;
   // String url = "https://www.facebook.com/v3.3/dialog/oauth?client_id=826437701076131&redirect_uri=https://www.facebook.com/connect/login_success.html&state={st=state123abc,ds=123456789}";
   // if (currentUser.isAdmin) {
@@ -58,38 +71,126 @@ void showAlert(BuildContext context, Function onlogout) {
           top: 20,
         ),
         contentPadding: EdgeInsets.only(top: 5, bottom: 20),
-        title: Text(
-          name,
-          style: TextStyle(color: Colors.white, fontSize: 30),
-          textAlign: TextAlign.center,
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(bottom: 20),
-              child: Text(
-                role,
-                style: TextStyle(color: Colors.white),
-                textAlign: TextAlign.center,
-              ),
+        title: Container(),
+        content: 
+        SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                (currentUser.photo_url != null &&
+                        currentUser.photo_url.isNotEmpty)
+                    ? Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(700),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: NetworkImage(currentUser.photo_url),
+                                  fit: BoxFit.cover),
+                              color: Color(0x22AAAAAA),
+                            ),
+                            height: 120,
+                            width: 120,
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(700),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage("assets/user.png"),
+                                    colorFilter: ColorFilter.mode(
+                                        Color(0x22AAAAAA), BlendMode.xor),
+                                    fit: BoxFit.cover),
+                                // color: Color(0x22AAAAAA),
+                                color: Colors.indigo[400]),
+                            height: 120,
+                            width: 120,
+                          ),
+                        ),
+                      ),
+                Container(height: 10),
+                Text(
+                  name,
+                  style: TextStyle(color: Colors.white, fontSize: 30),
+                  textAlign: TextAlign.center,
+                ),
+                Column(
+                  // margin: EdgeInsets.only(bottom: 20),
+                  children: [
+                    Text(
+                      currentUser.email,
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      currentUser.phoneno,
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      currentUser.university,
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                    Container(height: 7),
+                    Text(
+                      "YEAR",
+                      style: TextStyle(color: Colors.white70, fontSize: 10),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      currentUser.year,
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                    Container(height: 7),
+                    Text(
+                      "DOB",
+                      style: TextStyle(color: Colors.white70, fontSize: 10),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      DateFormat("d MMM yyyy").format(currentUser.dob),
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                    Container(height: 7),
+                    Text(
+                      "Address",
+                      style: TextStyle(color: Colors.white70, fontSize: 10),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      currentUser.address,
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+                Container(height: 10,),
+                FlatButton(
+                  onPressed: () async {
+                    // getToken();
+                    Navigator.pop(context);
+                    showLoading(context, message: "Signing Out");
+                    await logout();
+                    Navigator.pop(context);
+                    onlogout();
+                  },
+                  color: Colors.indigo[400],
+                  child: Text(
+                    'LOGOUT',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
             ),
-            FlatButton(
-              onPressed: () async {
-                // getToken();
-                Navigator.pop(context);
-                showLoading(context, message: "Signing Out");
-                await logout();
-                Navigator.pop(context);
-                onlogout();
-              },
-              color: Colors.indigo[400],
-              child: Text(
-                'LOGOUT',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
+          ),
         ),
       );
     },

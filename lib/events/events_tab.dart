@@ -47,6 +47,7 @@ class EventsTabState extends State<EventsTab> {
   }
 
   Future<List<List<EventDay>>> getEvents() async {
+    if (eventsList.length>0) return sortEvents();
     print("Getting Events");
 
     HttpClient client = new HttpClient();
@@ -82,6 +83,13 @@ class EventsTabState extends State<EventsTab> {
         eventsList.add(ev);
       }
       print("wvfebrfvbrefv");
+      currentUser.starredevents.forEach((ev) {
+        Event foundev = eventsList.firstWhere((tempev) {
+          return tempev.id == ev;
+        });
+        foundev.isStarred = true;
+        starredEvents.add(foundev);
+      });
       return sortEvents();
     } else {
       throw Exception('Failed to load events');
